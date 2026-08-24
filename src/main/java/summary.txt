@@ -1,0 +1,62 @@
+Summary for /Users/findlaynoble/Downloads/67client.jar
+Decompiled with CFR 0.152
+
+
+dev.sixseven.module.impl.AutoClickerModule
+----------------------------
+
+onTick()
+  Exception : org.benf.cfr.reader.bytecode.analysis.opgraph.op4rewriters.SwitchStringRewriter$TooOptimisticMatchException
+
+
+dev.sixseven.module.impl.AutoWalkModule
+----------------------------
+
+onTick()
+  Exception : org.benf.cfr.reader.bytecode.analysis.opgraph.op4rewriters.SwitchStringRewriter$TooOptimisticMatchException
+chunkAheadLoaded(net.minecraft.class_310 )
+  Exception : org.benf.cfr.reader.bytecode.analysis.opgraph.op4rewriters.SwitchStringRewriter$TooOptimisticMatchException
+
+
+dev.sixseven.module.impl.CoordSnapperModule
+----------------------------
+
+snap()
+  Exception : org.benf.cfr.reader.bytecode.analysis.opgraph.op4rewriters.SwitchStringRewriter$TooOptimisticMatchException
+
+
+dev.sixseven.module.impl.CustomCrosshairModule
+----------------------------
+
+render(dev.sixseven.render.nanovg.NVGRenderer float float )
+  Exception : org.benf.cfr.reader.bytecode.analysis.opgraph.op4rewriters.SwitchStringRewriter$TooOptimisticMatchException
+
+
+dev.sixseven.module.impl.CustomGlintModule
+----------------------------
+
+glintColor()
+  Exception : org.benf.cfr.reader.bytecode.analysis.opgraph.op4rewriters.SwitchStringRewriter$TooOptimisticMatchException
+
+
+dev.sixseven.module.impl.FakeRolesModule
+----------------------------
+
+roleColor()
+  Exception : org.benf.cfr.reader.bytecode.analysis.opgraph.op4rewriters.SwitchStringRewriter$TooOptimisticMatchException
+nameStyle()
+  Exception : org.benf.cfr.reader.bytecode.analysis.opgraph.op4rewriters.SwitchStringRewriter$TooOptimisticMatchException
+
+
+dev.sixseven.staff.StaffDetector
+----------------------------
+
+classify(java.lang.String net.minecraft.class_2561 net.minecraft.class_2561 net.minecraft.class_2561 java.lang.String boolean int dev.sixseven.staff.StaffDetector$DetectConfig )
+  Exception : org.benf.cfr.reader.bytecode.analysis.opgraph.op4rewriters.SwitchStringRewriter$TooOptimisticMatchException
+
+
+dev.sixseven.util.Amounts
+----------------------------
+
+format(double java.lang.String )
+  Exception : org.benf.cfr.reader.bytecode.analysis.opgraph.op4rewriters.SwitchStringRewriter$TooOptimisticMatchException

@@ -1,0 +1,135 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  net.minecraft.class_2818
+ *  net.minecraft.class_310
+ *  net.minecraft.class_638
+ *  net.minecraft.class_746
+ */
+package dev.sixseven.render;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import net.minecraft.class_2818;
+import net.minecraft.class_310;
+import net.minecraft.class_638;
+import net.minecraft.class_746;
+
+public final class IncrementalScan<H> {
+    private final int chunksPerTick;
+    private final int blockBudgetPerTick;
+    private final int idleTicks;
+    private volatile List<H> published = List.of();
+    private List<H> building = new ArrayList<H>();
+    private int cursor;
+    private int[] order = new int[0];
+    private int orderRadius = -1;
+    private int sweepPcx = Integer.MIN_VALUE;
+    private int sweepPcz = Integer.MIN_VALUE;
+    private int cooldown;
+    private boolean dirty;
+
+    public IncrementalScan(int chunksPerTick, int blockBudgetPerTick, int idleTicks) {
+        this.chunksPerTick = chunksPerTick;
+        this.blockBudgetPerTick = blockBudgetPerTick;
+        this.idleTicks = idleTicks;
+    }
+
+    public List<H> get() {
+        return this.published;
+    }
+
+    public void markDirty() {
+        this.dirty = true;
+    }
+
+    public void clear() {
+        this.published = List.of();
+        this.building = new ArrayList<H>();
+        this.cursor = 0;
+        this.cooldown = 0;
+        this.dirty = false;
+        this.sweepPcz = Integer.MIN_VALUE;
+        this.sweepPcx = Integer.MIN_VALUE;
+    }
+
+    public void tick(int radius, ChunkScanner<H> scanner) {
+        class_310 mc = class_310.method_1551();
+        class_638 level = mc.field_1687;
+        class_746 player = mc.field_1724;
+        if (level == null || player == null) {
+            return;
+        }
+        if (this.orderRadius != radius) {
+            this.ensureOrder(radius);
+            this.dirty = true;
+        }
+        if (this.cursor == 0) {
+            if (!this.dirty && this.cooldown > 0) {
+                --this.cooldown;
+                return;
+            }
+            this.sweepPcx = player.method_31476().field_9181;
+            this.sweepPcz = player.method_31476().field_9180;
+            this.building = new ArrayList<H>();
+            this.dirty = false;
+        } else if (this.dirty) {
+            this.sweepPcx = player.method_31476().field_9181;
+            this.sweepPcz = player.method_31476().field_9180;
+            this.cursor = 0;
+            this.building = new ArrayList<H>();
+            this.dirty = false;
+        }
+        int total = this.order.length;
+        int chunks = 0;
+        int blocks = 0;
+        while (this.cursor < total && chunks < this.chunksPerTick && blocks < this.blockBudgetPerTick) {
+            int packed = this.order[this.cursor];
+            short dx = (short)(packed >> 16);
+            short dz = (short)(packed & 0xFFFF);
+            blocks += scanner.scan(level.method_8497(this.sweepPcx + dx, this.sweepPcz + dz), this.building);
+            ++this.cursor;
+            ++chunks;
+        }
+        if (this.cursor >= total) {
+            this.published = this.building;
+            this.building = new ArrayList<H>();
+            this.cursor = 0;
+            this.cooldown = this.idleTicks;
+        }
+    }
+
+    private void ensureOrder(int radius) {
+        if (this.orderRadius == radius) {
+            return;
+        }
+        int side = 2 * radius + 1;
+        Integer[] offs = new Integer[side * side];
+        int i = 0;
+        for (int dx = -radius; dx <= radius; ++dx) {
+            for (int dz = -radius; dz <= radius; ++dz) {
+                offs[i++] = (dx & 0xFFFF) << 16 | dz & 0xFFFF;
+            }
+        }
+        Arrays.sort(offs, (a, b) -> {
+            short adx = (short)(a >> 16);
+            short adz = (short)(a & 0xFFFF);
+            short bdx = (short)(b >> 16);
+            short bdz = (short)(b & 0xFFFF);
+            return Integer.compare(adx * adx + adz * adz, bdx * bdx + bdz * bdz);
+        });
+        int[] out = new int[offs.length];
+        for (int k = 0; k < offs.length; ++k) {
+            out[k] = offs[k];
+        }
+        this.order = out;
+        this.orderRadius = radius;
+    }
+
+    public static interface ChunkScanner<H> {
+        public int scan(class_2818 var1, List<H> var2);
+    }
+}
+
