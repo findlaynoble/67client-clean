@@ -11,10 +11,32 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          
+      - name: Create Custom Intermediary Mappings
+        run: |
+          wget https://maven.fabricmc.net/net/fabricmc/intermediary/1.21/intermediary-1.21-v2.jar -O int.jar
+          unzip int.jar -d int_ext
+          sed -i 's/\r//g' int_ext/mappings/mappings.tiny
+          awk -F'\t' '{
+              if (NR == 1) {
+                  print $0 "\tnamed"
+              } else if (NF > 1) {
+                  print $0 "\t" $NF
+              } else {
+                  print $0
+              }
+          }' int_ext/mappings/mappings.tiny > int_ext/mappings/mappings_new.tiny
+          mv int_ext/mappings/mappings_new.tiny int_ext/mappings/mappings.tiny
+          cd int_ext
+          zip -r ../custom-mappings.jar .
+          cd ..
+          
       - name: Make Gradle Wrapper Executable
         run: chmod +x gradlew
+        
       - name: Build with Gradle
         run: ./gradlew build
+        
       - name: Upload Mod Jar
         uses: actions/upload-artifact@v4
         with:
